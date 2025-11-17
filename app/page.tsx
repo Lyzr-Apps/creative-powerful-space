@@ -28,7 +28,7 @@ export default function HomePage() {
   const [error, setError] = useState('')
   const [selectedRoute, setSelectedRoute] = useState<RouteOption | null>(null)
 
-  const from = 'Playarena, Sarjapur'
+  const from = 'N&N Lakeview Apartment, Serenity Layout'
   const to = 'Maker Meridian, Halasuru'
 
   async function findRoutes() {
@@ -66,34 +66,34 @@ export default function HomePage() {
               routes: [
                 {
                   id: '1',
-                  name: 'Outer Ring Road Route',
-                  duration: '45-55 minutes',
-                  distance: '28 km',
-                  stops: ['Sarjapur Road', 'Outer Ring Road', 'Indiranagar', 'Halasuru'],
-                  cost: '₹180-220',
+                  name: 'Via Whitefield Road & Old Airport Road',
+                  duration: '35-45 minutes',
+                  distance: '18 km',
+                  stops: ['Serenity Layout', 'Whitefield Road', 'Old Airport Road', 'Indiranagar', 'Halasuru'],
+                  cost: '₹140-180',
                   vehicle_type: 'Cab / Auto'
                 },
                 {
                   id: '2',
-                  name: 'Direct Via Whitefield Road',
-                  duration: '50-60 minutes',
-                  distance: '32 km',
-                  stops: ['Sarjapur', 'Whitefield Road', 'Old Airport Road', 'Halasuru'],
-                  cost: '₹200-250',
+                  name: 'Direct Via Outer Ring Road',
+                  duration: '40-50 minutes',
+                  distance: '22 km',
+                  stops: ['Serenity Layout', 'Outer Ring Road', 'Indiranagar', 'Halasuru'],
+                  cost: '₹160-200',
                   vehicle_type: 'Cab / Auto'
                 },
                 {
                   id: '3',
-                  name: 'Via ITPL Road (Fastest)',
-                  duration: '40-48 minutes',
-                  distance: '25 km',
-                  stops: ['Sarjapur', 'ITPL Road', 'Koramangala', 'Halasuru'],
-                  cost: '₹160-200',
+                  name: 'Via CMH Road & Koramangala (Fastest)',
+                  duration: '30-40 minutes',
+                  distance: '16 km',
+                  stops: ['Serenity Layout', 'CMH Road', 'Koramangala', 'Halasuru'],
+                  cost: '₹120-160',
                   vehicle_type: 'Cab / Auto'
                 }
               ],
-              traffic_info: 'Moderate traffic expected. Best to travel between 10 AM - 3 PM or after 7 PM.',
-              best_route: 'Via ITPL Road (Fastest)'
+              traffic_info: 'Light to moderate traffic. Best to travel between 10 AM - 4 PM or after 8 PM for faster commute.',
+              best_route: 'Via CMH Road & Koramangala (Fastest)'
             }
           }
         } else if (typeof data.response === 'object') {
