@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { MapPin, Navigation, Clock, AlertCircle, Loader2, MapPinned } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { MapPin, Navigation, Clock, AlertCircle, Loader2, MapPinned, Car, Bus, Zap } from 'lucide-react'
 
 interface RouteOption {
   id: string
@@ -27,6 +28,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedRoute, setSelectedRoute] = useState<RouteOption | null>(null)
+  const [transportMode, setTransportMode] = useState<string>('all')
 
   const from = 'N&N Lakeview Apartment, Serenity Layout'
   const to = 'Maker Meridian, Halasuru'
@@ -42,7 +44,7 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Find the best routes from ${from} to ${to} in Bangalore. Include multiple route options with duration, distance, stops, estimated cost, and vehicle type recommendations. Format as JSON with routes array.`,
+          message: `Find the best routes from ${from} to ${to} in Bangalore using ${transportMode === 'all' ? 'all available' : transportMode} transport. Include multiple route options with duration in minutes, distance in km, major stops/landmarks, estimated cost in INR rupees, and vehicle type. Return as JSON with routes array containing id, name, duration, distance, stops array, cost, and vehicle_type fields.`,
           agent_id: '68fd263d71c6b27d6c8eb80f'
         })
       })
@@ -62,8 +64,8 @@ export default function HomePage() {
             routeData = JSON.parse(data.response)
           } catch {
             // If parsing fails, create mock data from response
-            routeData = {
-              routes: [
+            const mockRoutes = {
+              cab: [
                 {
                   id: '1',
                   name: 'Via Whitefield Road & Old Airport Road',
@@ -92,8 +94,72 @@ export default function HomePage() {
                   vehicle_type: 'Cab / Auto'
                 }
               ],
+              bus: [
+                {
+                  id: '4',
+                  name: 'BMTC Route 500 - Express',
+                  duration: '50-65 minutes',
+                  distance: '18 km',
+                  stops: ['Serenity Layout', 'Outer Ring Road', 'BMTC Stand', 'Indiranagar', 'Halasuru'],
+                  cost: '₹50-75',
+                  vehicle_type: 'Bus (BMTC)'
+                },
+                {
+                  id: '5',
+                  name: 'BMTC Route 205 - Via Whitefield',
+                  duration: '55-70 minutes',
+                  distance: '18 km',
+                  stops: ['Serenity Layout', 'Whitefield Road', 'Old Airport Road', 'Indiranagar', 'Halasuru'],
+                  cost: '₹50-75',
+                  vehicle_type: 'Bus (BMTC)'
+                }
+              ],
+              metro: [
+                {
+                  id: '6',
+                  name: 'Metro + Auto (Via Whitefield)',
+                  duration: '45-60 minutes',
+                  distance: '18 km',
+                  stops: ['Serenity Layout', 'Auto to Whitefield Metro', 'Metro to Indiranagar', 'Auto to Halasuru'],
+                  cost: '₹80-120',
+                  vehicle_type: 'Metro + Auto'
+                }
+              ],
+              all: [
+                {
+                  id: '1',
+                  name: 'Via Whitefield Road & Old Airport Road',
+                  duration: '35-45 minutes',
+                  distance: '18 km',
+                  stops: ['Serenity Layout', 'Whitefield Road', 'Old Airport Road', 'Indiranagar', 'Halasuru'],
+                  cost: '₹140-180',
+                  vehicle_type: 'Cab / Auto'
+                },
+                {
+                  id: '3',
+                  name: 'Via CMH Road & Koramangala (Fastest)',
+                  duration: '30-40 minutes',
+                  distance: '16 km',
+                  stops: ['Serenity Layout', 'CMH Road', 'Koramangala', 'Halasuru'],
+                  cost: '₹120-160',
+                  vehicle_type: 'Cab / Auto'
+                },
+                {
+                  id: '4',
+                  name: 'BMTC Route 500 - Express',
+                  duration: '50-65 minutes',
+                  distance: '18 km',
+                  stops: ['Serenity Layout', 'Outer Ring Road', 'BMTC Stand', 'Indiranagar', 'Halasuru'],
+                  cost: '₹50-75',
+                  vehicle_type: 'Bus (BMTC)'
+                }
+              ]
+            }
+
+            routeData = {
+              routes: mockRoutes[transportMode as keyof typeof mockRoutes] || mockRoutes.all,
               traffic_info: 'Light to moderate traffic. Best to travel between 10 AM - 4 PM or after 8 PM for faster commute.',
-              best_route: 'Via CMH Road & Koramangala (Fastest)'
+              best_route: transportMode === 'bus' ? 'BMTC Route 500 - Express' : transportMode === 'metro' ? 'Metro + Auto (Via Whitefield)' : 'Via CMH Road & Koramangala (Fastest)'
             }
           }
         } else if (typeof data.response === 'object') {
@@ -151,6 +217,40 @@ export default function HomePage() {
                 </div>
                 <p className="text-white font-semibold">{to}</p>
               </div>
+            </div>
+
+            <div>
+              <label className="text-sm text-gray-400 mb-2 block">Mode of Transport</label>
+              <Select value={transportMode} onValueChange={setTransportMode}>
+                <SelectTrigger className="w-full bg-slate-700 border-slate-600 text-white">
+                  <SelectValue placeholder="Select transport mode" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  <SelectItem value="all" className="text-white">
+                    <div className="flex items-center gap-2">
+                      <span>All Transport Options</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="cab" className="text-white">
+                    <div className="flex items-center gap-2">
+                      <Car className="w-4 h-4" />
+                      <span>Cab / Auto Rickshaw</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="bus" className="text-white">
+                    <div className="flex items-center gap-2">
+                      <Bus className="w-4 h-4" />
+                      <span>Bus (BMTC)</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="metro" className="text-white">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4" />
+                      <span>Metro + Auto</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <Button
